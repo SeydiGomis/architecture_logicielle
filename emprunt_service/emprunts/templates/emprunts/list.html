@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>📚 Mes emprunts</h2>
+  {% if emprunts %}
+    <table class="table table-striped mt-3">
+      <thead>
+        <tr>
+          <th>Livre ID</th>
+          <th>Date d’emprunt</th>
+          <th>Statut</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in emprunts %}
+        <tr>
+          <td>{{ e.livre_id }}</td>
+          <td>{{ e.date_emprunt|date:"d/m/Y H:i" }}</td>
+          <td>
+            {% if e.statut == "ENCOURS" %}
+              <span class="badge bg-warning text-dark">En cours</span>
+            {% else %}
+              <span class="badge bg-success">Rendu</span>
+            {% endif %}
+          </td>
+          <td>
+            <a href="{% url 'emprunt_detail' e.id %}" class="btn btn-sm btn-primary">Détails</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="alert alert-info">Aucun emprunt en cours.</p>
+  {% endif %}
+</div>
+{% endblock %}

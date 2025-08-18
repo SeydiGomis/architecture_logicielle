@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>📚 Catalogue en ligne</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 p-6">
+  <h1 class="text-2xl font-bold mb-4">📚 Catalogue des Livres</h1>
+
+  <div id="livres" class="space-y-3"></div>
+
+  <script>
+    const api = "http://127.0.0.1:8001/api/books/";
+
+    async function refresh() {
+      const res = await fetch(api);
+      const data = await res.json();
+      document.getElementById("livres").innerHTML = data.map(l => `
+        <div class="p-3 border rounded flex justify-between items-center bg-white shadow">
+          <div>
+            <b>${l.titre}</b> – ${l.auteur} 
+            <span class="ml-2 text-sm ${l.disponible ? "text-green-600" : "text-red-600"}">
+              ${l.disponible ? "✅ Disponible" : "❌ Emprunté"}
+            </span>
+          </div>
+          ${l.disponible ? `
+            <a href="http://127.0.0.1:8002/nouveau/${l.id}/" 
+               class="bg-blue-600 text-white px-3 py-1 rounded">📚 Emprunter</a>
+          ` : ``}
+        </div>
+      `).join("");
+    }
+
+    refresh();
+  </script>
+</body>
+</html>

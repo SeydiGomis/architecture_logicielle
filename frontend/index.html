@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Catalogue</title>
+</head>
+<body>
+  <h1>📚 Catalogue des Livres</h1>
+  <div id="livres"></div>
+
+  <h2>➕ Ajouter un Livre</h2>
+  <form id="formAdd">
+    <input type="text" id="titre" placeholder="Titre" required>
+    <input type="text" id="auteur" placeholder="Auteur" required>
+    <button type="submit">Ajouter</button>
+  </form>
+
+  <script>
+    const api = "http://127.0.0.1:8001/api/books/";
+
+    function refresh() {
+      fetch(api)
+        .then(r => r.json())
+        .then(data => {
+          document.getElementById("livres").innerHTML = data.map(l =>
+            `<p>
+              <b>${l.titre}</b> - ${l.auteur} 
+              [${l.disponible ? "✅ dispo" : "❌ emprunté"}]
+              <button onclick="del(${l.id})">Supprimer</button>
+            </p>`
+          ).join("");
+        });
+    }
+
+    function del(id) {
+      fetch(api + id + "/", { method: "DELETE" }).then(refresh);
+    }
+
+    document.getElementById("formAdd").onsubmit = e => {
+      e.preventDefault();
+      fetch(api, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          titre: titre.value,
+          auteur: auteur.value,
+          disponible: true
+        })
+      }).then(refresh);
+    };
+
+    refresh();
+  </script>
+</body>
+</html>
